@@ -5,9 +5,10 @@ const { basename } = require("path")
 /**
  * Create a new hotword detector using snowboy
  * @param {string} file pmdl or umdl snowboy file. filename should be the hotword
+ * @param {string} resource path to the common.res file `/node_modules/snowboy/resources/common.res`
  * @param {{sensitivity: number, audioGain: number}} options additional optional parameters
  */
-module.exports = (file, options) =>
+module.exports = (file, resource, options) =>
 {
     const hotwords = basename(file).split(".")[0]
 
@@ -20,7 +21,7 @@ module.exports = (file, options) =>
 
     const detector = new Detector({
         models,
-        resource: __dirname + "/node_modules/snowboy/resources/common.res",
+        resource,
         audioGain: isNaN(options.audioGain) ? 1 : options.audioGain
     })
 
