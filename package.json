@@ -13,7 +13,7 @@
     "author": "Scott Winkelmann",
     "license": "MIT",
     "dependencies": {
-        "@scottishcyclops/node-recorder": "0.0.1",
+        "@scottishcyclops/node-recorder": "^1.0.0",
         "snowboy": "^1.2.0"
     }
 }

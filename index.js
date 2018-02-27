@@ -38,24 +38,17 @@ module.exports = (file, options) =>
         {
             detector.once("error", error =>
             {
-                console.log("erroooor", error)
                 stop()
                 reject(error)
             })
 
             detector.once("hotword", () =>
             {
-                console.log("hotworddddd")
                 stop()
                 resolve()
             })
 
-            detector.on("sound", () => console.log("sound"))
-            detector.on("silence", () => console.log("silence"))
-
-            const audio = mic.start({ threshold: 0.01 }).audio
-
-            audio.pipe(detector)
+            mic.start().audio.pipe(detector)
         })
     }
 }
