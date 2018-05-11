@@ -1,6 +1,6 @@
-const mic = require("@scottishcyclops/node-recorder")
-const { Detector, Models } = require("snowboy")
-const { basename } = require("path")
+const mic = require('@scottishcyclops/node-recorder')
+const { Detector, Models } = require('snowboy')
+const { basename } = require('path')
 
 /**
  * Create a new hotword detector using snowboy
@@ -10,46 +10,48 @@ const { basename } = require("path")
  */
 module.exports = (file, resource, options) =>
 {
-    const hotwords = basename(file).split(".")[0]
+  const hotwords = basename(file).split('.')[0]
+  let recorder = null
 
-    const models = new Models
-    models.add({
-        file,
-        hotwords,
-        sensitivity: isNaN(options.sensitivity) ? "0.5" : options.sensitivity.toString(),
-    })
+  const models = new Models
+  models.add({
+    file,
+    hotwords,
+    sensitivity: isNaN(options.sensitivity) ? '0.5' : options.sensitivity.toString(),
+  })
 
-    const detector = new Detector({
-        models,
-        resource,
-        audioGain: isNaN(options.audioGain) ? 1 : options.audioGain
-    })
+  const detector = new Detector({
+    models,
+    resource,
+    audioGain: isNaN(options.audioGain) ? 1 : options.audioGain
+  })
 
-    const stop = () =>
+  const stop = () =>
+  {
+    detector
+      .removeAllListeners('error')
+      .removeAllListeners('hotword')
+
+    mic.stop(recorder)
+  }
+
+  return {
+    listen: () => new Promise((resolve, reject) =>
     {
-        detector
-        .removeAllListeners("error")
-        .removeAllListeners("hotword")
+      detector.once('error', error =>
+      {
+        stop()
+        reject(error)
+      })
 
-        mic.stop()
-    }
+      detector.once('hotword', () =>
+      {
+        stop()
+        resolve()
+      })
 
-    return {
-        listen: () => new Promise((resolve, reject) =>
-        {
-            detector.once("error", error =>
-            {
-                stop()
-                reject(error)
-            })
-
-            detector.once("hotword", () =>
-            {
-                stop()
-                resolve()
-            })
-
-            mic.start().audio.pipe(detector)
-        })
-    }
+      recorder = mic.start()
+      recorder.stdout.pipe(detector)
+    })
+  }
 }
