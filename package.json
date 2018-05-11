@@ -14,6 +14,6 @@
     "license": "MIT",
     "dependencies": {
         "@scottishcyclops/node-recorder": "^1.1.1",
-        "snowboy": "^1.2.0"
+        "snowboy": "1.2.0"
     }
 }
